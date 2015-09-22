@@ -1,0 +1,162 @@
+%%%-------------------------------------------------------------------
+%%% @author Heinz Nikolaus Gies <heinz@project-fifo.net>
+%%% @copyright (C) 2015, Project-FiFo UG
+%%% @doc
+%%% Printing library for coloured console output, extends the format
+%%% strings by adding ~! (forground) ~# (background) and ~_ (underline)
+%%% terminal colours.
+%%% @end
+%%% Created : 22 Sep 2015 by Heinz Nikolaus Gies <heinz@licenser.net>
+%%%-------------------------------------------------------------------
+-module(cf).
+
+
+%% API exports
+-export([format/1, format/2]).
+-export([print/1,  print/2]).
+
+%%====================================================================
+%% API functions
+%%====================================================================
+%% @doc Prints a coloured string.
+%% Effectively the same as io:format just takes the additional color
+%% console text colour can be set by ~!**<colour>**. ~_**<colour>**
+%% will produce underlined text and ~#**<colour>** will change the
+%% background. Both ~# and ~_ only work with lowercase colours.
+%% An uppercase letersindicate bold colours.
+%%
+%% The colour can be one of:
+%%
+%%   !   - resets the output
+%%   x,X - black
+%%   r,R - red
+%%   g,G - greeen
+%%   y,Y - yellow
+%%   b,B - blue
+%%   m,M - magenta
+%%   c,C - cyan
+%%   w,W - white
+%%
+%%  The function will disable colours on non x term termials
+%% @end
+print(Fmt, Args) ->
+    io:format(cfmt(Fmt), Args).
+
+%% @doc Formates a coloured string
+%% Arguments are the same as for print/2, just returns a string as
+%% io_lib:format/2 does instead of printing it to stdout.
+%% @end
+format(Fmt, Args) ->
+    io_lib:format(cfmt(Fmt), Args).
+
+
+print(Fmt) ->
+    print(Fmt, []).
+format(Fmt) ->
+    format(Fmt, []).
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
+
+-define(NX,  "\033[0;30m").
+-define(NR,  "\033[0;31m").
+-define(NG,  "\033[0;32m").
+-define(NY,  "\033[0;33m").
+-define(NB,  "\033[0;34m").
+-define(NM,  "\033[0;35m").
+-define(NC,  "\033[0;36m").
+-define(NW,  "\033[0;37m").
+-define(BX,  "\033[1;30m").
+-define(BR,  "\033[1;31m").
+-define(BG,  "\033[1;32m").
+-define(BY,  "\033[1;33m").
+-define(BB,  "\033[1;34m").
+-define(BM,  "\033[1;35m").
+-define(BC,  "\033[1;36m").
+-define(BW,  "\033[1;37m").
+-define(UX,  "\033[4;30m").
+-define(UR,  "\033[4;31m").
+-define(UG,  "\033[4;32m").
+-define(UY,  "\033[4;33m").
+-define(UB,  "\033[4;34m").
+-define(UM,  "\033[4;35m").
+-define(UC,  "\033[4;36m").
+-define(UW,  "\033[4;37m").
+-define(BGX, "\033[40m").
+-define(BGR, "\033[41m").
+-define(BGG, "\033[42m").
+-define(BGY, "\033[43m").
+-define(BGB, "\033[44m").
+-define(BGM, "\033[45m").
+-define(BGC, "\033[46m").
+-define(BGW, "\033[47m").
+-define(R,   "\033[0m").
+-define(CFMT(Char, Colour),
+        cfmt_([$~, $!, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
+-define(CFMT_BG(Char, Colour),
+        cfmt_([$~, $#, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
+-define(CFMT_U(Char, Colour),
+        cfmt_([$~, $_, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
+
+
+cfmt(S) ->
+    cfmt(S, os:getenv("TERM") =:= "xterm").
+
+cfmt(S, Enabled) ->
+    lists:flatten(cfmt_(S, Enabled)).
+
+cfmt_([$~,$!, _C | S], false) ->
+    cfmt_(S, false);
+cfmt_([$~,$_, _C | S], false) ->
+    cfmt_(S, false);
+cfmt_([$~,$#, _C | S], false) ->
+    cfmt_(S, false);
+
+?CFMT($!, ?R);
+?CFMT($x, ?NX);
+?CFMT($X, ?BX);
+?CFMT($r, ?NR);
+?CFMT($R, ?BR);
+?CFMT($g, ?NG);
+?CFMT($G, ?BG);
+?CFMT($y, ?NY);
+?CFMT($Y, ?BY);
+?CFMT($b, ?NB);
+?CFMT($B, ?BB);
+?CFMT($m, ?NM);
+?CFMT($M, ?BM);
+?CFMT($c, ?NC);
+?CFMT($C, ?BC);
+?CFMT($w, ?NW);
+?CFMT($W, ?BW);
+
+?CFMT_BG($x, ?BGX);
+?CFMT_BG($r, ?BGR);
+?CFMT_BG($g, ?BGG);
+?CFMT_BG($y, ?BGY);
+?CFMT_BG($b, ?BGB);
+?CFMT_BG($m, ?BGM);
+?CFMT_BG($c, ?BGC);
+?CFMT_BG($w, ?BGW);
+
+?CFMT_U($x, ?UX);
+?CFMT_U($r, ?UR);
+?CFMT_U($g, ?UG);
+?CFMT_U($y, ?UY);
+?CFMT_U($b, ?UB);
+?CFMT_U($m, ?UM);
+?CFMT_U($c, ?UC);
+?CFMT_U($w, ?UW);
+
+cfmt_([$~,$~ | S], Enabled) ->
+    [$~,$~ | cfmt_(S, Enabled)];
+
+cfmt_([C | S], Enabled) ->
+    [C | cfmt_(S, Enabled)];
+
+cfmt_([], false) ->
+    "";
+cfmt_([], _Enabled) ->
+    ?R.
