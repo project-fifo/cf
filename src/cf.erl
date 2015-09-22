@@ -20,10 +20,10 @@
 %%====================================================================
 %% @doc Prints a coloured string.
 %% Effectively the same as io:format just takes the additional color
-%% console text colour can be set by ~!**<colour>**. ~_**<colour>**
-%% will produce underlined text and ~#**<colour>** will change the
-%% background. Both ~# and ~_ only work with lowercase colours.
+%% console text colour can be set by ~!**<colour>**.  ~#**<colour>**
+%% will change the background. Both ~# only work with lowercase colours.
 %% An uppercase letersindicate bold colours.
+%% A `_` can be added after the ~! to make the text underlined.
 %%
 %% The colour can be one of:
 %%
@@ -76,14 +76,7 @@ format(Fmt) ->
 -define(BM,  "\033[1;35m").
 -define(BC,  "\033[1;36m").
 -define(BW,  "\033[1;37m").
--define(UX,  "\033[4;30m").
--define(UR,  "\033[4;31m").
--define(UG,  "\033[4;32m").
--define(UY,  "\033[4;33m").
--define(UB,  "\033[4;34m").
--define(UM,  "\033[4;35m").
--define(UC,  "\033[4;36m").
--define(UW,  "\033[4;37m").
+-define(U,   "\033[4m").
 -define(BGX, "\033[40m").
 -define(BGR, "\033[41m").
 -define(BGG, "\033[42m").
@@ -94,7 +87,8 @@ format(Fmt) ->
 -define(BGW, "\033[47m").
 -define(R,   "\033[0m").
 -define(CFMT(Char, Colour),
-        cfmt_([$~, $!, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
+        cfmt_([$~, $!, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)];
+        cfmt_([$~, $!,  $_, Char | S], Enabled) -> [?U, Colour | cfmt_(S, Enabled)]).
 -define(CFMT_BG(Char, Colour),
         cfmt_([$~, $#, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
 -define(CFMT_U(Char, Colour),
@@ -108,8 +102,6 @@ cfmt(S, Enabled) ->
     lists:flatten(cfmt_(S, Enabled)).
 
 cfmt_([$~,$!, _C | S], false) ->
-    cfmt_(S, false);
-cfmt_([$~,$_, _C | S], false) ->
     cfmt_(S, false);
 cfmt_([$~,$#, _C | S], false) ->
     cfmt_(S, false);
@@ -140,15 +132,6 @@ cfmt_([$~,$#, _C | S], false) ->
 ?CFMT_BG($m, ?BGM);
 ?CFMT_BG($c, ?BGC);
 ?CFMT_BG($w, ?BGW);
-
-?CFMT_U($x, ?UX);
-?CFMT_U($r, ?UR);
-?CFMT_U($g, ?UG);
-?CFMT_U($y, ?UY);
-?CFMT_U($b, ?UB);
-?CFMT_U($m, ?UM);
-?CFMT_U($c, ?UC);
-?CFMT_U($w, ?UW);
 
 cfmt_([$~,$~ | S], Enabled) ->
     [$~,$~ | cfmt_(S, Enabled)];

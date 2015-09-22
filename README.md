@@ -6,9 +6,8 @@ syntax to add colours.
 
 ```erlang
 %% Effectively the same as io:format just takes the additional color
-%% console text colour can be set by ~!**<colour>**. ~_**<colour>**
-%% will produce underlined text and ~#**<colour>** will change the
-%% background. Both ~# and ~_ only work with lowercase colours.
+%% console text colour can be set by ~!**<colour>**.  ~#**<colour>**
+%% will change the background. Both ~# only work with lowercase colours.
 %% An uppercase letersindicate bold colours.
 %%
 %% The colour can be one of:
@@ -30,3 +29,10 @@ Build
 -----
 
     $ rebar3 compile
+
+
+Usage
+-----
+
+`cf:format/[1,2]` - an equivalent to `io_lib:format/[1,2]`.
+`cf:print/[1,2]`  - an equivalent to `io:format/[1,2]`.
