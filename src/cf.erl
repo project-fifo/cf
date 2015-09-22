@@ -90,7 +90,7 @@ format(Fmt) ->
 -define(R,   "\033[0m").
 -define(CFMT(Char, Colour),
         cfmt_([$~, $!, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)];
-        cfmt_([$~, $!,  $_, Char | S], Enabled) -> [?U, Colour | cfmt_(S, Enabled)]).
+        cfmt_([$~, $!,  $_, Char | S], Enabled) -> [Colour, ?U | cfmt_(S, Enabled)]).
 -define(CFMT_BG(Char, Colour),
         cfmt_([$~, $#, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
 -define(CFMT_U(Char, Colour),
