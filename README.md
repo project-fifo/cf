@@ -13,6 +13,8 @@ syntax to add colours.
 %% The colour can be one of:
 %%
 %%   !   - resets the output
+%%   ^   - bold (no colour change)
+%%   __  - (two _) makes text underlined (no colour change)
 %%   x,X - black
 %%   r,R - red
 %%   g,G - greeen

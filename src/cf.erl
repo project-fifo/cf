@@ -28,6 +28,7 @@
 %% The colour can be one of:
 %%
 %%   !   - resets the output
+%%   ^   - makes text bold
 %%   x,X - black
 %%   r,R - red
 %%   g,G - greeen
@@ -77,6 +78,7 @@ format(Fmt) ->
 -define(BC,  "\033[1;36m").
 -define(BW,  "\033[1;37m").
 -define(U,   "\033[4m").
+-define(B,   "\033[1m").
 -define(BGX, "\033[40m").
 -define(BGR, "\033[41m").
 -define(BGG, "\033[42m").
@@ -103,9 +105,17 @@ cfmt(S, Enabled) ->
 
 cfmt_([$~,$!, _C | S], false) ->
     cfmt_(S, false);
+cfmt_([$~,$!, $_, _C | S], false) ->
+    cfmt_(S, false);
 cfmt_([$~,$#, _C | S], false) ->
     cfmt_(S, false);
 
+cfmt_([$~, $!, $_, $_ | S], Enabled) ->
+    [?U | cfmt_(S, Enabled)];
+cfmt_([$~,$!, $^ | S], Enabled) ->
+    [?B | cfmt_(S, Enabled)];
+cfmt_([$~,$!, $_, $^ | S], Enabled) ->
+    [?U, ?B | cfmt_(S, Enabled)];
 ?CFMT($!, ?R);
 ?CFMT($x, ?NX);
 ?CFMT($X, ?BX);
