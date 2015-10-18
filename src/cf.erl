@@ -96,22 +96,36 @@ format(Fmt) ->
 -define(CFMT_U(Char, Colour),
         cfmt_([$~, $_, Char | S], Enabled) -> [Colour | cfmt_(S, Enabled)]).
 
+colour_term() ->
+    case application:get_env(cf, colour_term) of
+        {ok, V} ->
+            V;
+        undefined ->
+            V = case os:getenv("TERM") of
+                    "xterm" ++ _ ->
+                        true;
+                    _ ->
+                        false
+                end,
+            application:set_env(cf, colour_term, V),
+            V
+    end.
 
 cfmt(S) ->
-    cfmt(S, os:getenv("TERM") =:= "xterm").
+    cfmt(S, colour_term()).
 
 cfmt(S, Enabled) ->
     lists:flatten(cfmt_(S, Enabled)).
 
-cfmt_([$~,$!, _C | S], false) ->
-    cfmt_(S, false);
 cfmt_([$~,$!, $_, _C | S], false) ->
     cfmt_(S, false);
 cfmt_([$~,$#, _C | S], false) ->
     cfmt_(S, false);
+cfmt_([$~,$!, _C | S], false) ->
+    cfmt_(S, false);
 
 cfmt_([$~, $!, $_, $_ | S], Enabled) ->
-    [?U | cfmt_(S, Enabled)];
+    [?U |cfmt_(S, Enabled)];
 cfmt_([$~,$!, $^ | S], Enabled) ->
     [?B | cfmt_(S, Enabled)];
 cfmt_([$~,$!, $_, $^ | S], Enabled) ->
