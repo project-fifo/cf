@@ -102,8 +102,7 @@ colour_term() ->
             V;
         undefined ->
             Term = os:getenv("TERM"),
-            Caps = termcap:cap(Term),
-            V = proplists:is_defined("colors", Caps),
+            V = cf_term:has_color(Term),
             application:set_env(cf, colour_term, V),
             V
     end.
