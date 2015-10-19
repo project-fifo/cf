@@ -2,7 +2,7 @@
              [{description,"Terminal colour helper"},
               {vsn,"0.2.0"},
               {registered,[]},
-              {applications,[kernel,stdlib]},
+              {applications,[kernel,stdlib,termcap]},
               {env,[]},
               {modules,[]},
               {maintainers,["Heinz N. Gies <heinz@project-fifo.net>"]},
