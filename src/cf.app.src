@@ -1,10 +1,10 @@
 {application,cf,
              [{description,"Terminal colour helper"},
-              {vsn,"0.2.1"},
+              {vsn,"0.2.2"},
               {registered,[]},
-              {applications,[kernel,stdlib,termcap]},
+              {applications,[kernel,stdlib]},
               {env,[]},
               {modules,[]},
               {maintainers,["Heinz N. Gies <heinz@project-fifo.net>"]},
               {licenses,["MIT"]},
-              {links,[]}]}.
+              {links,[{"github","https://github.com/project-fifo/cf"}]}]}.
