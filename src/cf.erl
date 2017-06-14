@@ -118,15 +118,16 @@ cfmt(S) ->
 cfmt(S, Enabled) ->
     lists:flatten(cfmt_(S, Enabled)).
 
+cfmt_([$~, $!, $#, _R1, _R2, _G1, _G2, _B1, _B2 | S], false) ->
+    cfmt_(S, false);
+cfmt_([$~, $#, $#, _R1, _R2, _G1, _G2, _B1, _B2 | S], false) ->
+    cfmt_(S, false);
+
 cfmt_([$~, $!, $_, _C | S], false) ->
     cfmt_(S, false);
 cfmt_([$~, $#, _C | S], false) ->
     cfmt_(S, false);
 cfmt_([$~, $!, _C | S], false) ->
-    cfmt_(S, false);
-cfmt_([$~, $!, $#, _R1, _R2, _G1, _G2, _B1, _B2 | S], false) ->
-    cfmt_(S, false);
-cfmt_([$~, $#, $#, _R1, _R2, _G1, _G2, _B1, _B2 | S], false) ->
     cfmt_(S, false);
 
 cfmt_([$~, $!, $#, R1, R2, G1, G2, B1, B2 | S], Enabled) ->
