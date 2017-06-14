@@ -1,6 +1,6 @@
 {application,cf,
              [{description,"Terminal colour helper"},
-              {vsn,"0.2.2"},
+              {vsn, git},
               {registered,[]},
               {applications,[kernel,stdlib]},
               {env,[]},

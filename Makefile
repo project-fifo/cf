@@ -1,5 +1,8 @@
 TERMCAP_FILE=http://code.metager.de/source/raw/OpenBSD/src/share/termtypes/termtypes.master
 
+all: src/termcap.erl
+	rebar3 compile
+
 src/termcap.erl: termtypes.master.clean mk-termcap.escript termcap.erl
 	./mk-termcap.escript termtypes.master.clean  > src/cf_term.erl
 

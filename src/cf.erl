@@ -38,6 +38,11 @@
 %%   c,C - cyan
 %%   w,W - white
 %%
+%%  true color is supported by using
+%%  ~!#<rr><gg><bb> as each as hex values so ~!#ff6402
+%%
+%%  the same can be done for the background by yusign ~##
+%%
 %%  The function will disable colours on non x term termials
 %% @end
 print(Fmt, Args) ->
@@ -113,12 +118,36 @@ cfmt(S) ->
 cfmt(S, Enabled) ->
     lists:flatten(cfmt_(S, Enabled)).
 
-cfmt_([$~,$!, $_, _C | S], false) ->
+cfmt_([$~, $!, $_, _C | S], false) ->
     cfmt_(S, false);
-cfmt_([$~,$#, _C | S], false) ->
+cfmt_([$~, $#, _C | S], false) ->
     cfmt_(S, false);
-cfmt_([$~,$!, _C | S], false) ->
+cfmt_([$~, $!, _C | S], false) ->
     cfmt_(S, false);
+cfmt_([$~, $!, $#, _R1, _R2, _G1, _G2, _B1, _B2 | S], false) ->
+    cfmt_(S, false);
+cfmt_([$~, $#, $#, _R1, _R2, _G1, _G2, _B1, _B2 | S], false) ->
+    cfmt_(S, false);
+
+cfmt_([$~, $!, $#, R1, R2, G1, G2, B1, B2 | S], Enabled) ->
+    R = list_to_integer([R1, R2], 16),
+    G = list_to_integer([G1, G2], 16),
+    B = list_to_integer([B1, B2], 16),
+    ["\033[38;2;",
+     integer_to_list(R), $;,
+     integer_to_list(G), $;,
+     integer_to_list(B), $m |
+     cfmt_(S, Enabled)];
+
+cfmt_([$~, $#, $#, R1, R2, G1, G2, B1, B2 | S], Enabled) ->
+    R = list_to_integer([R1, R2], 16),
+    G = list_to_integer([G1, G2], 16),
+    B = list_to_integer([B1, B2], 16),
+    ["\033[48;2;",
+     integer_to_list(R), $;,
+     integer_to_list(G), $;,
+     integer_to_list(B), $m |
+     cfmt_(S, Enabled)];
 
 cfmt_([$~, $!, $_, $_ | S], Enabled) ->
     [?U |cfmt_(S, Enabled)];
@@ -126,6 +155,7 @@ cfmt_([$~,$!, $^ | S], Enabled) ->
     [?B | cfmt_(S, Enabled)];
 cfmt_([$~,$!, $_, $^ | S], Enabled) ->
     [?U, ?B | cfmt_(S, Enabled)];
+
 ?CFMT($!, ?R);
 ?CFMT($x, ?NX);
 ?CFMT($X, ?BX);
