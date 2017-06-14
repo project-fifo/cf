@@ -13,7 +13,10 @@ termcap.erl:
 clean:
 	[ -f termtypes.master ] && rm termtypes.master || true
 	[ -f termtypes.master.clean ] && rm termtypes.master.clean || true
-	
+
+compile:
+	rebar3 compile
+
 termtypes.master.clean: termtypes.master
 	cat termtypes.master | grep -v '^#' | grep -v '^\s*$$' > termtypes.master.clean
 
