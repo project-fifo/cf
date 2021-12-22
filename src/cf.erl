@@ -3,7 +3,7 @@
 %%% @copyright (C) 2015, Project-FiFo UG
 %%% @doc
 %%% Printing library for coloured console output, extends the format
-%%% strings by adding ~! (forground) ~# (background) and ~_ (underline)
+%%% strings by adding ~! (foreground) ~# (background) and ~_ (underline)
 %%% terminal colours.
 %%% @end
 %%% Created : 22 Sep 2015 by Heinz Nikolaus Gies <heinz@licenser.net>
@@ -48,7 +48,7 @@
 print(Fmt, Args) ->
     io:format(cfmt(Fmt), Args).
 
-%% @doc Formates a coloured string
+%% @doc Formats a coloured string
 %% Arguments are the same as for print/2, just returns a string as
 %% io_lib:format/2 does instead of printing it to stdout.
 %% @end
